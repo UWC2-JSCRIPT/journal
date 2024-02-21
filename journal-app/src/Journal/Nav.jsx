@@ -10,7 +10,7 @@ import firebase from 'firebase/compat/app';
     const [user, setUser] = useState({})
    
     useEffect(() => {
-     const unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
+     const unregisterAuthObserver = firebase.auth().onAuthgitStateChanged(user => {
          setUser(user)
          console.log(user.photoURL)
          // setIsSignedIn(!!user);
