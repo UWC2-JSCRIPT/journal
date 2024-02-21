@@ -11,7 +11,10 @@ function AddJournal() {
     
     
     // Add a new document with a generated id.
-    const docRef = await addDoc(collection(db, "journal-entries"), {
+    const userId = "cQ9QISVTo8VlAnnbKrOQ"   
+
+
+    const docRef = await addDoc(collection(db, "users", userId, "journal-entries"), {
       entry: entry,
       createdAt: new Date()
     });
