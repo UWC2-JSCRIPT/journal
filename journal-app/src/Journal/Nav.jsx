@@ -1,39 +1,55 @@
-import React, {useEffect, useState}from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import firebase from 'firebase/compat/app';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
-   // Listen to the Firebase Auth state and set the local state.
-   
-   
-   export default function Nav() {
-    const navigate = useNavigate()
-    const [user, setUser] = useState({})
-   
-    useEffect(() => {
-     const unregisterAuthObserver = firebase.auth().onAuthgitStateChanged(user => {
-         setUser(user)
-         console.log(user.photoURL)
-         // setIsSignedIn(!!user);
-     });
-     return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
-   }, [user]);
+export default function Nav() {
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
-   const handleSignout = () => {
+  // Configure Firebase.
+  const config = {
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  };
+  firebase.initializeApp(config);
+
+  useEffect(() => {
+    const unregisterAuthObserver = firebase
+      .auth()
+      .onAuthStateChanged((user) => {
+        setUser(user);
+      });
+
+    return () => unregisterAuthObserver;
+  }, [user]);
+
+  const handleLogout = () => {
     firebase.auth().signOut();
-    navigate('/')
-   }
+    navigate("/");
+  };
 
-
-    return (
+  return (
+    <div>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/journal">Journal</Link>
+        </li>
+        <li>
+          <Link to="/journal/1">Journal Entry</Link>
+        </li>
+      </ul>
+      {user && (
         <div>
-            <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/journal">Journal</Link></li>
-                <li><Link to="/journal/1">Journal Entry</Link></li>
-            </ul>
-            {user.displayName && user.displayName}
-            {user.photoURL && <img src={user.photoURL} alt="jiji"/>}
-            <button onClick={() => handleSignout()}>Sign Out</button>
+          <p>{user.displayName}</p>
+          <img src={user.photoURL} alt={`Avatar of ${user.displayName}`} />
+          <button onClick={() => handleLogout()}>Log Out</button>
         </div>
-    );
+      )}
+    </div>
+  );
 }
